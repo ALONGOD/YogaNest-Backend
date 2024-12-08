@@ -2,20 +2,21 @@ import { logger } from '../../services/logger.service.js'
 import { productService } from './product.service.js'
 
 export async function getProducts(req, res) {
-	try {
-		const filterBy = {
-			txt: req.query.txt || '',
-			minSpeed: +req.query.minSpeed || 0,
+    try {
+        const filterBy = {
+            txt: req.query.txt || '',
+            minPrice: +req.query.minPrice || 0, // Filter by price
+            category: req.query.category || '', // Filter by category
             sortField: req.query.sortField || '',
             sortDir: req.query.sortDir || 1,
-			pageIdx: req.query.pageIdx,
-		}
-		const products = await productService.query(filterBy)
-		res.json(products)
-	} catch (err) {
-		logger.error('Failed to get products', err)
-		res.status(400).send({ err: 'Failed to get products' })
-	}
+            // pageIdx: req.query.pageIdx,
+        };
+        const products = await productService.query(filterBy);
+        res.json(products);
+    } catch (err) {
+        logger.error('Failed to get products', err);
+        res.status(400).send({ err: 'Failed to get products' });
+    }
 }
 
 export async function getProductById(req, res) {

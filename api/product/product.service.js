@@ -25,9 +25,9 @@ async function query(filterBy = { txt: '' }) {
 		const collection = await dbService.getCollection('product')
 		var productCursor = await collection.find(criteria, { sort })
 
-		if (filterBy.pageIdx !== undefined) {
-			productCursor.skip(filterBy.pageIdx * PAGE_SIZE).limit(PAGE_SIZE)
-		}
+		// if (filterBy.pageIdx !== undefined) {
+		// 	productCursor.skip(filterBy.pageIdx * PAGE_SIZE).limit(PAGE_SIZE)
+		// }
 
 		const products = productCursor.toArray()
 		return products
@@ -131,12 +131,19 @@ async function removeProductMsg(productId, msgId) {
 }
 
 function _buildCriteria(filterBy) {
-    const criteria = {
-        vendor: { $regex: filterBy.txt, $options: 'i' },
-        speed: { $gte: filterBy.minSpeed },
+    const criteria = {};
+
+    if (filterBy.txt) {
+        criteria.name = { $regex: filterBy.txt, $options: 'i' }; // Search by name
+    }
+    if (filterBy.minPrice) {
+        criteria.price = { $gte: filterBy.minPrice }; // Filter by minimum price
+    }
+    if (filterBy.category) {
+        criteria.category = filterBy.category; // Exact category match
     }
 
-    return criteria
+    return criteria;
 }
 
 function _buildSort(filterBy) {
